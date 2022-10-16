@@ -1,0 +1,4 @@
+azul escuro 326789
+azul claro 78A6C8
+creme E9EEF2
+laranja E65C4F
