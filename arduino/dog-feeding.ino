@@ -36,6 +36,29 @@ void setup() {
   }
   Serial.println("Connected to the WiFi network");
   Serial.println(WiFi.localIP());
+  
+  server.on("/getLocalTime", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    DateTime now = rtc.now();
+    String response = "";
+    response = now.hour();
+    response += ":";
+    response += now.minute();
+    response += ":";
+    response += now.second();
+    request->send(200, "plain/text", response);
+  });
+
+  server.on("/setLocalTime", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    if (request->hasParam("hour") && request->hasParam("minute")) {
+      int year = request->getParam("year")->value().toInt();
+      int month = request->getParam("month")->value().toInt();
+      int day = request->getParam("day")->value().toInt();
+      int hour = request->getParam("hour")->value().toInt();
+      int minute = request->getParam("minute")->value().toInt();
+      rtc.adjust(DateTime(year, month, day, hour, minute, 0));
+      request->send(200, "plain/text", "OK");
+    }
+  });
 
   server.on("/setLunchTime", HTTP_GET, [] (AsyncWebServerRequest *request) {
     if (request->hasParam("hour") && request->hasParam("minute")) {
